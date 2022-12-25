@@ -139,19 +139,22 @@ void hash_table_delete(struct HashTable* ht, char key_to_delete[])
   }
   else if(ht->arr[hash(key_to_delete)]->head != NULL && ht->arr[hash(key_to_delete)]->len > 1){
     // need to delete from linked list since there are  > 1 keys in the hash value
-    delete_from_ll(ht->arr[hash(key_to_delete)], key_to_delete);
+    if (delete_from_ll(ht->arr[hash(key_to_delete)], key_to_delete) == 1){
+      printf("\nDeleted key => %s from table", key_to_delete);
+      return;
+    }
+    else{
+      printf("\nCouldn't find key => %s in table", key_to_delete);
+      return ;
+    }
   }
   else {
-    printf("\nkey %s doesn't exist in hash table", key_to_delete);
+    printf("\nkey => %s doesn't exist in hash table", key_to_delete);
     return ;
   }
 
 
 }
-
-
-
-
 
 
 int main()
@@ -193,10 +196,5 @@ int main()
 //
 //
 // display_linkedList(ll);
-
-
-
-
-
 
  }
