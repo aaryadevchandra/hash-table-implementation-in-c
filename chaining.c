@@ -69,6 +69,9 @@ struct LinkedList* _new_ll_head ( )
 
 struct HashTable {
   struct LinkedList* arr[HASH_TABLE_SIZE];
+
+  // long int present_hashes[100];
+  // int present_hashes_index;
 };
 
 struct HashTable* get_hash_table (  ){
@@ -78,6 +81,8 @@ struct HashTable* get_hash_table (  ){
 
   // intialiazes hash table with *node
   memset(ht->arr, 0, HASH_TABLE_SIZE);
+  // memset(ht->present_hashes, 0, 100);
+  // ht->present_hashes_index = 0;
 }
 
 
@@ -94,16 +99,23 @@ long hash(char* key) {
 
 void hash_table_insert(struct HashTable* ht, char key[])
 {
+  long int key_hash = hash(key);
 
-  if(ht->arr[hash(key)] == NULL){
+  if(ht->arr[key_hash] == NULL){
     struct LinkedList* ll = _new_ll_head();
-    ht->arr[hash(key)] = ll;
-    add_node(key, ht->arr[hash(key)]);
-    ht->arr[hash(key)]->len++;
+    ht->arr[key_hash] = ll;
+    add_node(key, ht->arr[key_hash]);
+    ht->arr[key_hash]->len++;
+
+    // ht->present_hashes[ht->present_hashes_index] = key_hash;
+    // ht->present_hashes_index++;
   }
-  else if(ht->arr[hash(key)]->head != NULL) {
-    add_node(key, ht->arr[hash(key)]);
-    ht->arr[hash(key)]->len++;
+  else if(ht->arr[key_hash]->head != NULL) {
+    add_node(key, ht->arr[key_hash]);
+    ht->arr[key_hash]->len++;
+
+    // ht->present_hashes[ht->present_hashes_index] = key_hash;
+    // ht->present_hashes_index++;
   }
 
 }
@@ -132,14 +144,27 @@ int delete_from_ll( struct LinkedList* ll, char key[] )
 void hash_table_delete(struct HashTable* ht, char key_to_delete[])
 {
 
-  if ( ht->arr[hash(key_to_delete)]->head != NULL && ht->arr[hash(key_to_delete)]->len == 1)
+  long int key_hash = hash(key_to_delete);
+
+  if ( ht->arr[key_hash]->head != NULL && ht->arr[key_hash]->len == 1)
   {
     // directly nullify linked list belonging to specified key
-    ht->arr[hash(key_to_delete)] = NULL;
+    ht->arr[key_hash] = NULL;
+
+
+//////////////////////////////////
+    // for ( int i =0 ; i < 100; i ++ )
+    // {
+    //   if(  ht->present_hashes[i]  == key_hash)  {
+    //     ht->present_hashes[i] = 0;
+    //   }
+    // }
+
+    ////////////////////
   }
-  else if(ht->arr[hash(key_to_delete)]->head != NULL && ht->arr[hash(key_to_delete)]->len > 1){
+  else if(ht->arr[key_hash]->head != NULL && ht->arr[key_hash]->len > 1){
     // need to delete from linked list since there are  > 1 keys in the hash value
-    if (delete_from_ll(ht->arr[hash(key_to_delete)], key_to_delete) == 1){
+    if (delete_from_ll(ht->arr[key_hash], key_to_delete) == 1){
       printf("\nDeleted key => %s from table", key_to_delete);
       return;
     }
@@ -156,6 +181,15 @@ void hash_table_delete(struct HashTable* ht, char key_to_delete[])
 
 }
 
+//
+// void display_hash_table ( struct HashTable* ht)
+// {
+//   for ( int i=0 ;i<100;i++)
+//   {
+//     printf("\n%lld", ht->present_hashes[i]);
+//
+//   }
+// }
 
 int main()
  {
@@ -170,7 +204,13 @@ int main()
    // initializing hash table
    struct HashTable* ht = get_hash_table();
 
+  hash_table_insert(ht, "hello");
+  hash_table_insert(ht, "my");
+  hash_table_insert(ht, "sweet");
+  hash_table_insert(ht, "senpai");
 
+
+    display_linkedList(ht->arr[hash("my")]);
 
    // yay works
 //    printf("%p\n", ht->arr[hash("hello")]);
